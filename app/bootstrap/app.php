@@ -21,9 +21,13 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
-// $app->withFacades();
+$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
 
-// $app->withEloquent();
+$app->withFacades();
+//
+$app->withEloquent();
+//
+$app->configure('database');
 
 /*
 |--------------------------------------------------------------------------
@@ -76,7 +80,8 @@ $app->singleton(
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
+// $app->register(JMS\Serializer\SerializerBuilder::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
