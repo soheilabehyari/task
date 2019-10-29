@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Repositories\Eloquent\ExchangeRateRepository;
-use App\Services\ExchangeRateProxy;
 use App\Services\ExchangeRateService;
 use Exception;
 use Illuminate\Console\Command;

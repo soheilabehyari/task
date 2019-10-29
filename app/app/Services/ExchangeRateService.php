@@ -14,29 +14,31 @@ class ExchangeRateService
     private $repository;
     private $serializer;
     private $exchangeRates;
-    private $rabbit;
+    private $queue;
 
-    public function __construct(ExchangeRateProxy $exchangeRateProxy, ExchangeRateRepository $repository, Serializer $serializer)
+    public function __construct(ExchangeRateProxy $exchangeRateProxy, ExchangeRateRepository $repository, Serializer $serializer, QueueService $queue)
     {
         $this->proxy = $exchangeRateProxy;
         $this->repository = $repository;
         $this->serializer = $serializer;
+        $this->queue = $queue;
     }
 
     public function run()
     {
         $this->setExchangeRates();
-        $this->saveExchangeRates();
-
-        $this->repository->create($this->format($this->exchangeRates));
+        $result = $this->saveExchangeRates();
+        if ($result->wasRecentlyCreated) {
+            $this->notifyServices();
+        }
     }
 
-    public function setExchangeRates()
+    private function setExchangeRates()
     {
         $this->exchangeRates = $this->proxy->getLatestRates();
     }
 
-    public function saveExchangeRates()
+    private function saveExchangeRates()
     {
         $record = $this->repository->firstOrCreate(
             [
@@ -45,12 +47,12 @@ class ExchangeRateService
             ],
             $this->format($this->exchangeRates)
         );
-        $wasCreated = $record->wasRecentlyCreated;
-        if ($wasCreated) {
-            // we have new rate for USD, inform services via rabbit
-            /* TODO: rabbit service */
-            echo 'new rate';
-        }
+        return $record;
+    }
+
+    private function notifyServices()
+    {
+        $this->queue->publish($this->exchangeRates['rates']['USD'], env('QUEUE_EXCHANGE_QUEUE'));
     }
 
     private function format($response)
