@@ -14,3 +14,9 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(['middleware' => 'BasicAuth', 'prefix' => 'api/v1'], function () use ($router) {
+    $router->get('/auth', function () use ($router) {
+        return 'authenticated';
+    });
+});
