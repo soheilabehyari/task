@@ -28,5 +28,14 @@ return [
 
     ],
 
+    'redis' => [
+        'client' => 'predis',
+        'default' => [
+            'host' => env('CACHE_HOST', '127.0.0.1'),
+            'password' => env('CACHE_PASSWORD', null),
+            'port' => env('CACHE_PORT', 6379),
+            'database' => env('CACHE_DATABASE', 0)
+        ]
+    ]
 
 ];

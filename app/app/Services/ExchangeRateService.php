@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Repositories\Eloquent\ExchangeRateRepository;
+use Illuminate\Support\Facades\Redis as Cache;
 
 class ExchangeRateService
 {
@@ -27,6 +28,7 @@ class ExchangeRateService
         $result = $this->saveExchangeRates();
         if ($result->wasRecentlyCreated) {
             $this->notifyServices();
+            $this->updateCache();
         }
     }
 
@@ -49,5 +51,12 @@ class ExchangeRateService
     private function notifyServices()
     {
         $this->queue->publish($this->exchangeRates['rates']['USD'], env('QUEUE_EXCHANGE_QUEUE'));
+    }
+
+    private function updateCache()
+    {
+        foreach ($this->exchangeRates['rates'] as $k => $v) {
+            Cache::hset($this->exchangeRates['date'], $k, $v);
+        }
     }
 }
