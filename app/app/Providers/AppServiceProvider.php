@@ -20,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('GuzzleHttp\Client', function ($api) use ($baseUrl) {
             return new Client([
                 'base_uri' => $baseUrl,
-                'timeout' => 5.0,
+                'timeout' => 9.0,
             ]);
         });
 

@@ -12,7 +12,7 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return 'Travian Exchange System';
 });
 
 $router->group(['middleware' => 'BasicAuth', 'prefix' => 'api/v1'], function () use ($router) {

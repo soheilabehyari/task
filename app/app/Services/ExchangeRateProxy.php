@@ -4,6 +4,7 @@
 namespace App\Services;
 
 
+use Exception;
 use GuzzleHttp\Client;
 
 class ExchangeRateProxy
@@ -29,7 +30,7 @@ class ExchangeRateProxy
             $url = $this->baseUrl . $uri;
             $response = $this->client->get($url);
             return json_decode($response->getBody()->getContents(), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo $e->getMessage();
             return [];
         }
