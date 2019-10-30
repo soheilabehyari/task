@@ -81,7 +81,7 @@ $app->singleton(
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-// $app->register(JMS\Serializer\SerializerBuilder::class);
+$app->register(Pearl\RequestValidate\RequestServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 

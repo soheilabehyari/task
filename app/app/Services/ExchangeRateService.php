@@ -5,22 +5,19 @@ namespace App\Services;
 
 
 use App\Repositories\Eloquent\ExchangeRateRepository;
-use Ivory\Serializer\Serializer;
 
 class ExchangeRateService
 {
 
     private $proxy;
     private $repository;
-    private $serializer;
     private $exchangeRates;
     private $queue;
 
-    public function __construct(ExchangeRateProxy $exchangeRateProxy, ExchangeRateRepository $repository, Serializer $serializer, QueueService $queue)
+    public function __construct(ExchangeRateProxy $exchangeRateProxy, ExchangeRateRepository $repository, QueueService $queue)
     {
         $this->proxy = $exchangeRateProxy;
         $this->repository = $repository;
-        $this->serializer = $serializer;
         $this->queue = $queue;
     }
 
@@ -40,30 +37,17 @@ class ExchangeRateService
 
     private function saveExchangeRates()
     {
-        $record = $this->repository->firstOrCreate(
-            [
-                'rate_date' => $this->exchangeRates['date'],
-                'rates->USD' => $this->exchangeRates['rates']['USD']
-            ],
-            $this->format($this->exchangeRates)
-        );
+        $criteria = [
+            'rate_date' => $this->exchangeRates['date'],
+            'rates->USD' => $this->exchangeRates['rates']['USD']
+        ];
+        $formattedData = $this->repository->serialize($this->exchangeRates);
+        $record = $this->repository->firstOrCreate($criteria, $formattedData);
         return $record;
     }
 
     private function notifyServices()
     {
         $this->queue->publish($this->exchangeRates['rates']['USD'], env('QUEUE_EXCHANGE_QUEUE'));
-    }
-
-    private function format($response)
-    {
-        if ($response) {
-            return [
-                'base' => $response['base'],
-                'rate_date' => $response['date'],
-                'rates' => json_encode($response['rates']),
-            ];
-        }
-        return [];
     }
 }

@@ -10,7 +10,8 @@
         "egeloen/serializer": "^1.0",
         "guzzlehttp/guzzle": "^6.3",
         "jms/serializer": "^3.3",
-        "laravel/lumen-framework": "^6.0",
+        "laravel/lumen-framework": "5.8.*",
+        "pearl/lumen-request-validate": "^1.3",
         "php-amqplib/php-amqplib": "^2.10"
     },
     "require-dev": {

@@ -16,6 +16,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['middleware' => 'BasicAuth', 'prefix' => 'api/v1'], function () use ($router) {
+    $router->get('/rate', 'ExchangeRateApiController@getRate');
     $router->get('/auth', function () use ($router) {
         return 'authenticated';
     });
